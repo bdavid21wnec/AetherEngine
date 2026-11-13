@@ -1,0 +1,26 @@
+# One-off: encodes the HDR10 pass-through clips (Probes/HDR10PassThrough/Scripts/build.sh) on Linux,
+# where ffmpeg with libx265 is one apt install away, and uploads them as an artifact.
+name: HDR10 probe clips
+on:
+  push:
+    branches: [hdr10-clips]
+jobs:
+  clips:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg python3-numpy zsh
+      - run: ffmpeg -hide_banner -encoders | grep libx265
+      - run: Probes/HDR10PassThrough/Scripts/build.sh pattern_24
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pattern_24
+          path: Probes/HDR10PassThrough/out/pattern_24.mp4
+          retention-days: 3
+      - run: Probes/HDR10PassThrough/Scripts/build.sh pattern_60
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pattern_60
+          path: Probes/HDR10PassThrough/out/pattern_60.mp4
+          retention-days: 3
