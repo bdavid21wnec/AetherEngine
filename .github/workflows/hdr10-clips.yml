@@ -11,16 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg python3-numpy zsh
-      - run: ffmpeg -hide_banner -encoders | grep libx265
-      - run: Probes/HDR10PassThrough/Scripts/build.sh pattern_24
+      - run: Probes/HDR10PassThrough/Scripts/build.sh pattern_24_m4000
+      - run: ffprobe -v error -show_frames -read_intervals "%+#1" -select_streams v:0 -show_entries frame=side_data_list Probes/HDR10PassThrough/out/pattern_24_m4000.mp4 | grep -iE "max_luminance|max_content|max_average"
       - uses: actions/upload-artifact@v4
         with:
-          name: pattern_24
-          path: Probes/HDR10PassThrough/out/pattern_24.mp4
-          retention-days: 3
-      - run: Probes/HDR10PassThrough/Scripts/build.sh pattern_60
-      - uses: actions/upload-artifact@v4
-        with:
-          name: pattern_60
-          path: Probes/HDR10PassThrough/out/pattern_60.mp4
+          name: pattern_24_m4000
+          path: Probes/HDR10PassThrough/out/pattern_24_m4000.mp4
           retention-days: 3
